@@ -89,7 +89,7 @@ while True:
                     #upbit.buy_market_order("KRW-BTC", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     BTCB = BTCB + KRW_BTC_price * krw
-                    print("BTC 코인을 %f 만큼 구매했습니다." %krw)
+                    print("Purchase %f BTC coin." %krw)
                     
 
             if SAND_target_price < SAND_current_price:                          # Current SAND price > Target price -> Purchase
@@ -97,7 +97,7 @@ while True:
                     #upbit.buy_market_order("KRW-SAND", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     SANDB  = SANDB + KRW_SAND_price * krw
-                    print("SAND 코인을 %f 만큼 구매했습니다." %krw)
+                    print("Purchase %f SAND coin." %krw)
                     
 
             if MANA_target_price < MANA_current_price:                           # Current MANA price > Target price -> Purchase
@@ -105,7 +105,7 @@ while True:
                     #upbit.buy_market_order("KRW-MANA", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     MANAB  = MANAB + KRW_MANA_price * krw
-                    print("MANA 코인을 %f 만큼 구매했습니다." %krw)
+                    print("Purchase %f MANA coin." %krw)
                     
                     
             print_myBalance()
@@ -122,19 +122,19 @@ while True:
                 #upbit.sell_market_order("KRW-BTC", btc*0.9995)             # Sell all of them  
                 KRWB = KRWB + btc * BTC_current_price
                 BTCB = BTCB - btc
-                print("BTC  코인을 %f 만큼 판매했습니다." %krw)
+                print("Sell %f BTC coin." %krw)
 
             if snd * SAND_current_price > 5000:                             # SAND > 5000 
                 #upbit.sell_market_order("KRW-SAND", snd*0.9995)            # Sell all of them  
                 KRWB = KRWB + snd * SAND_current_price
                 SANDB = SANDB - snd
-                print("SAND 코인을 %f 만큼 판매했습니다." %krw)
+                print("Sell %f SAND coin." %krw)
 
             if mna * MANA_current_price > 5000:                             # MANA > 5000
                 #upbit.sell_market_order("KRW-MANA", mna*0.9995)            # Sell all of them  
                 KRWB = KRWB + mna * MANA_current_price
                 MANAB = MANAB - mna
-                print("MANA 코인을 %f 만큼 판매했습니다." %krw)
+                print("Sell %f MANA coin." %krw)
             
             print_myBalance()
         
