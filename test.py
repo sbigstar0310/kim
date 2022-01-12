@@ -14,15 +14,15 @@ SANDB = 0
 MANAB = 0
 
 def get_target_price(ticker, k):
-    
     df = pyupbit.get_ohlcv(ticker, interval="day", count=2)
+    time.sleep(0.1)
     target_price = df.iloc[0]['close'] + (df.iloc[0]['high'] - df.iloc[0]['low']) * k
     return target_price
 
 def get_start_time(ticker):
-    
     # 09:00 return
     df = pyupbit.get_ohlcv(ticker, interval="day", count=1)
+    time.sleep(0.1)
     start_time = df.index[0]
     return start_time
 
@@ -47,7 +47,7 @@ def print_myBalance():
 
 # Log in
 upbit = pyupbit.Upbit(access, secret)
-print(" autotrade start")
+print("autotrade start")
 
 # find best k before starting the loop
 print("initialize k")
@@ -70,7 +70,7 @@ while True:
             k3 = bestk.get_bestk("KRW-MANA")
         
         if start_time < now < end_time - datetime.timedelta(seconds=30):                               # 09:00 < current time < 08:59:30
-            BTC_target_price  = get_target_price("KRW-BTC",   k1)             # Set target price 
+            BTC_target_price  = get_target_price("KRW-BTC",  k1)              # Set target price 
             SAND_target_price = get_target_price("KRW-SAND", k2)              # Find best k in bestk.py - get_bestk()
             MANA_target_price = get_target_price("KRW-MANA", k3)
 
@@ -86,8 +86,8 @@ while True:
             coinBalanceLimit = krw / 3    # coin balance can be purchased until 1/3 * krw 
 
             if BTC_target_price < BTC_current_price:                           # Current BTC price > Target price -> Purchase           
-                print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
                 if krw > 5000 and BTC_current_price * BTCB < coinBalanceLimit:                                               
+                    print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
                     #upbit.buy_market_order("KRW-BTC", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     BTCB = BTCB + KRW_BTC_price * krw
@@ -96,8 +96,8 @@ while True:
                     
 
             if SAND_target_price < SAND_current_price:                          # Current SAND price > Target price -> Purchase
-                print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
                 if krw > 5000 and SAND_current_price * SANDB < coinBalanceLimit:                                               
+                    print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
                     #upbit.buy_market_order("KRW-SAND", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     SANDB  = SANDB + KRW_SAND_price * krw
@@ -106,8 +106,8 @@ while True:
                     
 
             if MANA_target_price < MANA_current_price:                           # Current MANA price > Target price -> Purchase
-                print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))
-                if krw > 5000 and MANA_current_price * MANAB < coinBalanceLimit:                                               
+                if krw > 5000 and MANA_current_price * MANAB < coinBalanceLimit:    
+                    print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))                                           
                     #upbit.buy_market_order("KRW-MANA", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     MANAB  = MANAB + KRW_MANA_price * krw
