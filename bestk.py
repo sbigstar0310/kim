@@ -4,7 +4,7 @@ import numpy as np
 
 
 def get_ror(ticket, k = 0.5):
-    df = pyupbit.get_ohlcv(ticket, "minute30", count=10)  # get ohlcv with 30 minute interval
+    df = pyupbit.get_ohlcv(ticket, "day", count=30)  # get ohlcv with 30 minute interval
     time.sleep(0.1)
     df['range'] = (df['high'] - df['low']) * k
     df['target'] = df['open'] + df['range'].shift(1)

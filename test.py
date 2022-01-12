@@ -62,12 +62,6 @@ while True:
         now_minute = int(now.strftime("%M"))                                  # minute of current time
         start_time = get_start_time("KRW-BTC")                                # start_time == 09:00
         end_time = start_time + datetime.timedelta(days=1)                    # end_time == next day 09:00
-
-        if now_minute % 30 == 0:                                              # update k every 30 minutes
-            print("%s || update k" %now)
-            k1 = bestk.get_bestk("KRW-BTC")
-            k2 = bestk.get_bestk("KRW-SAND")
-            k3 = bestk.get_bestk("KRW-MANA")
         
         if start_time < now < end_time - datetime.timedelta(seconds=30):                               # 09:00 < current time < 08:59:30
             BTC_target_price  = get_target_price("KRW-BTC",  k1)              # Set target price 
