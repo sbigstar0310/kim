@@ -2,6 +2,7 @@
 import time
 import pyupbit
 import datetime
+import bestk
 
 access = "emsE1HCqqG2xLmGcUNEsatFvhU9F1R9lvnBcXynT"
 secret = "eUZJrsriOzaIvRLqH6cyxmcfCelNqyaP7BArcLbP"
@@ -38,29 +39,42 @@ def get_balance(ticker):
     return 0
 
 def print_myBalance():
-    print("KRW: " + str(KRWB))
-    print("BTC: " + str(BTCB))
-    print("SAND: " + str(SANDB))
-    print("MANA: " + str(MANAB))
+    print("My Balance")
+    print("  KRW: " + str(KRWB))
+    print("  BTC: " + str(BTCB))
+    print("  SAND: " + str(SANDB))
+    print("  MANA: " + str(MANAB))
 
 # Log in
 upbit = pyupbit.Upbit(access, secret)
-print("autotrade start")
+print(" autotrade start")
+
+# find best k before starting the loop
+print("initialize k")
+k1 = bestk.get_bestk("KRW-BTC")
+k2 = bestk.get_bestk("KRW-SAND")
+k3 = bestk.get_bestk("KRW-MANA")
 
 # Start auto trading
 while True:
     try:
-        now = datetime.datetime.now()
+        now = datetime.datetime.now()                                         # current time
+        now_minute = int(now.strftime("%M"))                                  # minute of current time
         start_time = get_start_time("KRW-BTC")                                # start_time == 09:00
         end_time = start_time + datetime.timedelta(days=1)                    # end_time == next day 09:00
-        cnt = 0
 
-        if start_time < now < end_time - datetime.timedelta(seconds=30):      # 09:00 < current time < 08:59:30
-            BTC_target_price = get_target_price("KRW-BTC", 0.5)               # Set target price
-            SAND_target_price = get_target_price("KRW-SAND", 0.5)
-            MANA_target_price = get_target_price("KRW-MANA", 0.5)
+        if now_minute % 30 == 0:                                              # update k every 30 minutes
+            print("%s || update k" %now)
+            k1 = bestk.get_bestk("KRW-BTC")
+            k2 = bestk.get_bestk("KRW-SAND")
+            k3 = bestk.get_bestk("KRW-MANA")
+        
+        if start_time < now < end_time - datetime.timedelta(seconds=30):                               # 09:00 < current time < 08:59:30
+            BTC_target_price  = get_target_price("KRW-BTC",   k1)             # Set target price 
+            SAND_target_price = get_target_price("KRW-SAND", k2)              # Find best k in bestk.py - get_bestk()
+            MANA_target_price = get_target_price("KRW-MANA", k3)
 
-            BTC_current_price = pyupbit.get_current_price("KRW-BTC")          # Current BTC price
+            BTC_current_price  = pyupbit.get_current_price("KRW-BTC")          # Current BTC price
             SAND_current_price = pyupbit.get_current_price("KRW-SAND")
             MANA_current_price = pyupbit.get_current_price("KRW-MANA")
 
@@ -68,52 +82,50 @@ while True:
             KRW_SAND_price = 1 / SAND_current_price
             KRW_MANA_price = 1 / MANA_current_price
 
-            print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
-            print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
-            print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))
-
-            if BTC_target_price < BTC_current_price:
-                cnt += 1
-            if SAND_target_price < SAND_current_price:
-                cnt += 1
-            if MANA_target_price < MANA_current_price:
-                cnt += 1
-            if cnt == 0:
-                print()
-                continue
-
-            krw = get_balance("KRW") / cnt   
+            krw = get_balance("KRW") / 3
+            coinBalanceLimit = krw / 3    # coin balance can be purchased until 1/3 * krw 
 
             if BTC_target_price < BTC_current_price:                           # Current BTC price > Target price -> Purchase           
-                if krw > 5000:                                               
+                print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
+                if krw > 5000 and BTC_current_price * BTCB < coinBalanceLimit:                                               
                     #upbit.buy_market_order("KRW-BTC", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     BTCB = BTCB + KRW_BTC_price * krw
-                    print("Purchase %f BTC coin." %krw)
+                    print("%s || Purchase %f BTC coin." %(now, krw))
+                    print_myBalance()
                     
 
             if SAND_target_price < SAND_current_price:                          # Current SAND price > Target price -> Purchase
-                if krw > 5000:                                               
+                print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
+                if krw > 5000 and SAND_current_price * SANDB < coinBalanceLimit:                                               
                     #upbit.buy_market_order("KRW-SAND", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     SANDB  = SANDB + KRW_SAND_price * krw
-                    print("Purchase %f SAND coin." %krw)
+                    print("%s || Purchase %f SAND coin." %(now, krw))
+                    print_myBalance()
                     
 
             if MANA_target_price < MANA_current_price:                           # Current MANA price > Target price -> Purchase
-                if krw > 5000:                                               
+                print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))
+                if krw > 5000 and MANA_current_price * MANAB < coinBalanceLimit:                                               
                     #upbit.buy_market_order("KRW-MANA", (krw/3)*0.9995)           
                     KRWB = KRWB - krw
                     MANAB  = MANAB + KRW_MANA_price * krw
-                    print("Purchase %f MANA coin." %krw)
-                    
-                    
-            print_myBalance()
+                    print("%s || Purchase %f MANA coin." %(now, krw))
+                    print_myBalance()
+
+            
+
         else:                                                             # 08:59:50 ~ 09:00:00
             btc = get_balance("KRW-BTC")                                  # Check balance of BTC, SAND, MANA
             snd = get_balance("KRW-SAND")   
             mna = get_balance("KRW-MANA")   
             
+            # reset k
+            k1 = bestk.get_bestk("KRW-BTC")
+            k2 = bestk.get_bestk("KRW-SAND")
+            k3 = bestk.get_bestk("KRW-MANA")
+
             BTC_current_price = pyupbit.get_current_price("KRW-BTC")     # Current BTC price
             SAND_current_price = pyupbit.get_current_price("KRW-SAND")
             MANA_current_price = pyupbit.get_current_price("KRW-MANA")
@@ -122,23 +134,22 @@ while True:
                 #upbit.sell_market_order("KRW-BTC", btc*0.9995)             # Sell all of them  
                 KRWB = KRWB + btc * BTC_current_price
                 BTCB = BTCB - btc
-                print("Sell %f BTC coin." %krw)
+                print("%s || Sell %f BTC coin." %(now, krw))
+                print_myBalance()
 
             if snd * SAND_current_price > 5000:                             # SAND > 5000 
                 #upbit.sell_market_order("KRW-SAND", snd*0.9995)            # Sell all of them  
                 KRWB = KRWB + snd * SAND_current_price
                 SANDB = SANDB - snd
-                print("Sell %f SAND coin." %krw)
+                print("%s || Sell %f SAND coin." %(now, krw))
+                print_myBalance()
 
             if mna * MANA_current_price > 5000:                             # MANA > 5000
                 #upbit.sell_market_order("KRW-MANA", mna*0.9995)            # Sell all of them  
                 KRWB = KRWB + mna * MANA_current_price
                 MANAB = MANAB - mna
-                print("Sell %f MANA coin." %krw)
-            
-            print_myBalance()
-        
-        print()
+                print("%s || Sell %f MANA coin." %(now, krw))
+                print_myBalance()      
         time.sleep(1)
 
     except Exception as e:
