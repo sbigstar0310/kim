@@ -7,6 +7,8 @@ import bestk
 access = "emsE1HCqqG2xLmGcUNEsatFvhU9F1R9lvnBcXynT"
 secret = "eUZJrsriOzaIvRLqH6cyxmcfCelNqyaP7BArcLbP"
 
+numOfCoins = 3
+
 # initial seed money
 KRWB = 210000
 BTCB = 0
@@ -67,6 +69,10 @@ while True:
             BTC_target_price  = get_target_price("KRW-BTC",  k1)              # Set target price 
             SAND_target_price = get_target_price("KRW-SAND", k2)              # Find best k in bestk.py - get_bestk()
             MANA_target_price = get_target_price("KRW-MANA", k3)
+            
+            BTC_target_price  = 0
+            SAND_target_price = 0
+            MANA_target_price = 0
            
             BTC_current_price  = pyupbit.get_current_price("KRW-BTC")          # Current BTC price
             SAND_current_price = pyupbit.get_current_price("KRW-SAND")
@@ -76,40 +82,38 @@ while True:
             KRW_SAND_price = 1 / SAND_current_price
             KRW_MANA_price = 1 / MANA_current_price
 
-            krw = get_balance("KRW") / 3
-            coinBalanceLimit = krw / 3    # coin balance can be purchased until 1/3 * krw 
+            krw = get_balance("KRW")      # current krw balance
+            coinBalanceLimit = krw / numOfCoins    # coin balance can be purchased until 1/3 * krw 
 
             if BTC_target_price < BTC_current_price:                           # Current BTC price > Target price -> Purchase           
-                if krw > 5000 and BTC_current_price * BTCB < coinBalanceLimit:                                               
+                if krw // numOfCoins > 5000 and BTC_current_price * BTCB < coinBalanceLimit:                                               
                     print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
-                    #upbit.buy_market_order("KRW-BTC", (krw/3)*0.9995)           
-                    KRWB = KRWB - krw
-                    BTCB = BTCB + KRW_BTC_price * krw
-                    print("%s || Purchase %f BTC coin." %(now, krw))
+                    #upbit.buy_market_order("KRW-BTC", (krw//3)*0.9995)           
+                    KRWB = KRWB - krw // numOfCoins
+                    BTCB = BTCB + KRW_BTC_price * (krw // numOfCoins)
+                    print("%s || Purchase %f BTC coin." %(now, krw // numOfCoins))
                     print_myBalance()
                     
 
             if SAND_target_price < SAND_current_price:                          # Current SAND price > Target price -> Purchase
-                if krw > 5000 and SAND_current_price * SANDB < coinBalanceLimit:                                               
+                if krw // numOfCoins > 5000 and SAND_current_price * SANDB < coinBalanceLimit:                                               
                     print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
                     #upbit.buy_market_order("KRW-SAND", (krw/3)*0.9995)           
-                    KRWB = KRWB - krw
-                    SANDB  = SANDB + KRW_SAND_price * krw
-                    print("%s || Purchase %f SAND coin." %(now, krw))
+                    KRWB = KRWB - krw // numOfCoins
+                    SANDB  = SANDB + KRW_SAND_price * krw // numOfCoins
+                    print("%s || Purchase %f SAND coin." %(now, krw // numOfCoins))
                     print_myBalance()
                     
 
             if MANA_target_price < MANA_current_price:                           # Current MANA price > Target price -> Purchase
-                if krw > 5000 and MANA_current_price * MANAB < coinBalanceLimit:    
+                if krw // numOfCoins > 5000 and MANA_current_price * MANAB < coinBalanceLimit:    
                     print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))                                           
                     #upbit.buy_market_order("KRW-MANA", (krw/3)*0.9995)           
-                    KRWB = KRWB - krw
-                    MANAB  = MANAB + KRW_MANA_price * krw
-                    print("%s || Purchase %f MANA coin." %(now, krw))
+                    KRWB = KRWB - krw // numOfCoins
+                    MANAB  = MANAB + KRW_MANA_price * krw // numOfCoins
+                    print("%s || Purchase %f MANA coin." %(now, krw // numOfCoins))
                     print_myBalance()
-
-            
-
+        
         else:                                                             # 08:59:01 ~ 09:00:00
             btc = get_balance("KRW-BTC")                                  # Check balance of BTC, SAND, MANA
             snd = get_balance("KRW-SAND")   
@@ -120,7 +124,7 @@ while True:
             k2 = bestk.get_bestk("KRW-SAND")
             k3 = bestk.get_bestk("KRW-MANA")
 
-            BTC_current_price = pyupbit.get_current_price("KRW-BTC")     # Current BTC price
+            BTC_current_price  = pyupbit.get_current_price("KRW-BTC")     # Current BTC price
             SAND_current_price = pyupbit.get_current_price("KRW-SAND")
             MANA_current_price = pyupbit.get_current_price("KRW-MANA")
 
