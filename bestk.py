@@ -22,12 +22,12 @@ def get_bestk(ticket):
     max_k = 0
     for k in np.arange(0.1, 1.0, 0.1):
         ror = get_ror(ticket, k)
-        #print("%s: %f, %.1f" %(ticket, ror, k))
+        print("%s: %f, %.1f" %(ticket, ror, k))
         if ror > max_ror:
             max_ror = ror
             max_k = k
     return max_k
 
-#print(get_bestk("KRW-BTC"))
-#print(get_bestk("KRW-SAND"))
-#print(get_bestk("KRW-MANA"))
+print(get_bestk("KRW-BTC"))
+print(get_bestk("KRW-SAND"))
+print(get_bestk("KRW-MANA"))
