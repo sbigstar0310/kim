@@ -29,7 +29,6 @@ def get_start_time(ticker):
     return start_time
 
 def get_balance(ticker):
-    
     if ticker == "KRW":
         return KRWB
     elif ticker == "KRW-BTC":
