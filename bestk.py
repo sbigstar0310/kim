@@ -4,7 +4,7 @@ import numpy as np
 
 
 def get_ror(ticket, k = 0.5):
-    df = pyupbit.get_ohlcv(ticket, "day", count=30)  # get ohlcv in 30 days
+    df = pyupbit.get_ohlcv(ticket, "minute30", count=48)  # get ohlcv in 30 days
     time.sleep(0.25)
     df['range'] = (df['high'] - df['low']) * k
     df['target'] = df['open'] + df['range'].shift(1)
@@ -20,9 +20,9 @@ def get_ror(ticket, k = 0.5):
 def get_bestk(ticket):
     max_ror =  0
     max_k = 0
-    for k in np.arange(0.1, 1.0, 0.1):
+    for k in np.arange(0, 1.0, 0.1):
         ror = get_ror(ticket, k)
-        #print("%s: %f, %.1f" %(ticket, ror, k))
+        #print("%s: %f, %.2f" %(ticket, ror, k))
         if ror > max_ror:
             max_ror = ror
             max_k = k
