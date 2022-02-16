@@ -34,6 +34,7 @@ def findBest(times, cnt, k, coin):
 
 # 1, 3, 5, 10, 15, 30, 60, 240분봉에 대해서 최대 200개 조회 가능
 
+# back testing from recent 6 hours
 cnt      = 2 * 6
 coinList = ["KRW-BTC", "KRW-SAND", "KRW-MANA"]
 for coin in coinList:

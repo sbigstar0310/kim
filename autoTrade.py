@@ -105,7 +105,7 @@ while True:
             MANA_current_price = pyupbit.get_current_price("KRW-MANA")
 
             if BTC_target_price < BTC_current_price:                          # Current BTC price > Target price -> Purchase           
-                if krw // numOfCoins > 5000 and not BTCBUY and k1 > 0 :                                               
+                if krw // numOfCoins > 5000 and not BTCBUY and k1 >= 0 :                                               
                     print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
                     upbit.buy_market_order("KRW-BTC", krw // numOfCoins)
                     BTCBUY = True
@@ -114,7 +114,7 @@ while True:
                     
 
             if SAND_target_price < SAND_current_price:                        # Current SAND price > Target price -> Purchase
-                if krw // numOfCoins > 5000 and not SANDBUY and k2 > 0:                                               
+                if krw // numOfCoins > 5000 and not SANDBUY and k2 >= 0:                                               
                     print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
                     upbit.buy_market_order("KRW-SAND", krw // numOfCoins)           
                     SANDBUY = True
@@ -123,7 +123,7 @@ while True:
                     
 
             if MANA_target_price < MANA_current_price:                        # Current MANA price > Target price -> Purchase
-                if krw // numOfCoins > 5000 and not MANABUY and k3 > 0:    
+                if krw // numOfCoins > 5000 and not MANABUY and k3 >= 0:    
                     print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))                                         
                     upbit.buy_market_order("KRW-MANA", krw // numOfCoins)           
                     MANABUY = True

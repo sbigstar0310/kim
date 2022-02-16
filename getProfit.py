@@ -25,4 +25,4 @@ secret = "Sz6meGwNRQUr3Irpk0DQ88lKv8igRfO9f7riLDGN"
 
 upbit = pyupbit.Upbit(access, secret)
 
-myPro()
+#print(myPro())
