@@ -73,12 +73,17 @@ while True:
 
             if BTC_target_price < BTC_current_price:                           # Current BTC price > Target price -> Purchase           
                 if krw > 5000 and not BTCBUY:                                               
+                    
+                    money  = krw / 1.0005
+                    fee    = money * 0.0005
+
                     print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
+                    print("fee is %f" % fee)
                     #upbit.buy_market_order("KRW-BTC", (krw//3)*0.9995)           
-                    KRWB = KRWB - krw 
-                    BTCB = BTCB + KRW_BTC_price * (krw )
+                    KRWB = KRWB - money - fee
+                    BTCB = BTCB + KRW_BTC_price * money
                     BTCBUY = True
-                    print("%s || Purchase %f BTC coin." %(now, krw ))
+                    print("%s || Purchase %f BTC coin." %(now, money))
                     print_myBalance()
  
         else:                                                             # 08:59:01 ~ 09:00:00
@@ -94,9 +99,13 @@ while True:
 
             if btc * BTC_current_price > 5000:                              # BTC > 5000
                 #upbit.sell_market_order("KRW-BTC", btc*0.9995)             # Sell all of them  
+                fee = btc * BTC_current_price * 0.0005
+
                 KRWB += btc * BTC_current_price * 0.9995
                 BTCB = BTCB - btc
+                
                 print("%s || Sell %f BTC coin with %f value" %(now, btc, BTC_current_price))
+                print("fee is %f" % fee)
                 print_myBalance()    
         
             krw = get_balance("KRW")      # current krw balance

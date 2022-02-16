@@ -4,13 +4,13 @@ import numpy as np
 
 
 def get_ror(ticket, k = 0.5):
-    df = pyupbit.get_ohlcv(ticket, "minute30", count=48)  # get ohlcv in 30 days
+    df = pyupbit.get_ohlcv(ticket, "minute30", count= 2 * 6)  # get ohlcv in 30 days
     time.sleep(0.25)
     df['range'] = (df['high'] - df['low']) * k
     df['target'] = df['open'] + df['range'].shift(1)
 
     df['ror'] = np.where(df['high'] > df['target'],
-                        df['close'] / df['target'],
+                        df['close'] / df['target'] - 0.0005 ,
                         1)
 
     ror = df['ror'].cumprod()[-2]
@@ -26,6 +26,8 @@ def get_bestk(ticket):
         if ror > max_ror:
             max_ror = ror
             max_k = k
+    if max_ror < 1.0:
+        max_k = -1
     return max_k
 
 #print(get_bestk("KRW-BTC"))

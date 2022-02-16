@@ -4,6 +4,7 @@ import time
 import pyupbit
 import datetime
 import bestk
+import getProfit
 
 access = "5cI0QdQvmKxYfvyJAIYnwQVaiwnfQfdy4GiOffyo"
 secret = "Sz6meGwNRQUr3Irpk0DQ88lKv8igRfO9f7riLDGN"
@@ -66,43 +67,65 @@ while True:
         minute = now.minute
         second = now.second
         
+        if getProfit.myPro() < -2:                                          # if profit is under -2%, sell all
+            
+            BTC_current_price  = pyupbit.get_current_price("KRW-BTC")         # Current BTC price
+            SAND_current_price = pyupbit.get_current_price("KRW-SAND")
+            MANA_current_price = pyupbit.get_current_price("KRW-MANA")
+
+            # Reset coin bought FLAG
+            BTCBUY   = False
+            SANDBUY  = False
+            MANABUY  = False
+
+            if btc * BTC_current_price > 5000:                                # BTC > 5000
+                upbit.sell_market_order("KRW-BTC", btc)                       # Sell all of them  
+                print("%s || Sell %f BTC coin with %f value" %(now, btc, BTC_current_price))
+                print_myBalance()
+
+            if snd * SAND_current_price > 5000:                               # SAND > 5000 
+                upbit.sell_market_order("KRW-SAND", snd)                      # Sell all of them  
+                print("%s || Sell %f SAND coin with %f value" %(now, snd, SAND_current_price))
+                print_myBalance()
+
+            if mna * MANA_current_price > 5000:                               # MANA > 5000
+                upbit.sell_market_order("KRW-MANA", mna)                      # Sell all of them  
+                print("%s || Sell %f MANA coin with %f value" %(now, mna, BTC_current_price))
+                print_myBalance()     
+
+            krw = get_balance("KRW")                                          # update krw balance
+
         if not (minute == 29 or minute == 59 and 55 <= second <= 59):         # Purchase only when XX:00:00 ~ XX:28:59 or XX:30:00 ~ XX:58:59
             BTC_target_price  = get_target_price("KRW-BTC",  k1)              # Set target price using,
             SAND_target_price = get_target_price("KRW-SAND", k2)              # find best k in bestk.py - get_bestk()
             MANA_target_price = get_target_price("KRW-MANA", k3)
 
-            BTC_target_price  = 0
-            SAND_target_price = 0
-            MANA_target_price = 0
-
             BTC_current_price  = pyupbit.get_current_price("KRW-BTC")         # Current BTC price
             SAND_current_price = pyupbit.get_current_price("KRW-SAND")
             MANA_current_price = pyupbit.get_current_price("KRW-MANA")
 
-            print(BTC_current_price, SAND_current_price, MANA_current_price)
-
             if BTC_target_price < BTC_current_price:                          # Current BTC price > Target price -> Purchase           
-                if krw // numOfCoins > 5000 and not BTCBUY:                                               
+                if krw // numOfCoins > 5000 and not BTCBUY and k1 > 0 :                                               
                     print("BTC  | target price is: %d, current price is: %d" %(BTC_target_price, BTC_current_price))
-                    #upbit.buy_market_order("KRW-BTC", krw // numOfCoins)
+                    upbit.buy_market_order("KRW-BTC", krw // numOfCoins)
                     BTCBUY = True
                     print("%s || Purchase %d BTC coin." %(now, krw // numOfCoins))
                     print_myBalance()
                     
 
             if SAND_target_price < SAND_current_price:                        # Current SAND price > Target price -> Purchase
-                if krw // numOfCoins > 5000 and not SANDBUY:                                               
+                if krw // numOfCoins > 5000 and not SANDBUY and k2 > 0:                                               
                     print("SAND | target price is: %d, current price is: %d" %(SAND_target_price, SAND_current_price))
-                    #upbit.buy_market_order("KRW-SAND", krw // numOfCoins)           
+                    upbit.buy_market_order("KRW-SAND", krw // numOfCoins)           
                     SANDBUY = True
                     print("%s || Purchase %d SAND coin." %(now, krw // numOfCoins))
                     print_myBalance()
                     
 
             if MANA_target_price < MANA_current_price:                        # Current MANA price > Target price -> Purchase
-                if krw // numOfCoins > 5000 and not MANABUY:    
+                if krw // numOfCoins > 5000 and not MANABUY and k3 > 0:    
                     print("MANA | target price is: %d, current price is: %d" %(MANA_target_price, MANA_current_price))                                         
-                    #upbit.buy_market_order("KRW-MANA", krw // numOfCoins)           
+                    upbit.buy_market_order("KRW-MANA", krw // numOfCoins)           
                     MANABUY = True
                     print("%s || Purchase %d MANA coin." %(now, krw // numOfCoins))
                     print_myBalance()
